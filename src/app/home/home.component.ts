@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { createHttpObservable } from '../common/util';
-import { map } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Course } from '../model/course';
 
@@ -21,7 +21,9 @@ export class HomeComponent implements OnInit {
 
       const courses$: Observable<Course[]> = http$
         .pipe(
-          map(res => res['payload'])
+          tap(() => console.log('HTTP request executed.')),
+          map(res => res['payload']),
+          shareReplay(),
         );
 
       // Reactive Design
