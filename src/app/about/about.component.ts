@@ -15,10 +15,16 @@ export class AboutComponent implements OnInit {
     const interval$ = timer(3000, 1000);
 
     console.log('start test');
-    interval$.subscribe(val => console.log('stream 1 ' + val));
+    const sub = interval$.subscribe(val => console.log('stream 1 ' + val));
+
+    setTimeout(() => sub.unsubscribe(), 5000);
 
     const click$ = fromEvent(document, 'click');
-    click$.subscribe((evt => { console.log(evt); }));
+    click$.subscribe(
+      evt => console.log(evt),
+      err => console.log(err),
+      () => console.log('completed')
+    );
   }
 
 }
