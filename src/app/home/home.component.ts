@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { createHttpObservable } from '../common/util';
 import { map } from 'rxjs/operators';
-import { noop } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Course } from '../model/course';
 
 
@@ -12,35 +12,30 @@ import { Course } from '../model/course';
 })
 export class HomeComponent implements OnInit {
 
-    beginnerCourses: Course[];
-    advancedCourses: Course[];
+    beginnerCourses$: Observable<Course[]>;
+    advancedCourses$: Observable<Course[]>;
 
     ngOnInit() {
 
-      const http$ = createHttpObservable('/api/courses');
+      const http$: Observable<Object> = createHttpObservable('/api/courses');
 
-      const courses$ = http$
+      const courses$: Observable<Course[]> = http$
         .pipe(
           map(res => res['payload'])
         );
 
-      // Imperative Design / RxJS Anti Pattern:
-      //  - avoid a lot of logic in subscribe method
-      //  - do not nest subscribe calls
-      courses$.subscribe(
-        courses => {
-          console.log(courses);
+      // Reactive Design
+      this.beginnerCourses$ = courses$
+        .pipe(
+          map(courses => courses
+            .filter(course => course.category === 'BEGINNER'))
+        );
 
-          this.beginnerCourses = courses
-            .filter(course => course.category === 'BEGINNER');
-
-          this.advancedCourses = courses
-            .filter(course => course.category === 'ADVANCED');
-
-        },
-        noop,
-        () => console.log('completed')
-      );
+      this.advancedCourses$ = courses$
+        .pipe(
+          map(courses => courses
+            .filter(course => course.category === 'ADVANCED'))
+        );
 
     }
 

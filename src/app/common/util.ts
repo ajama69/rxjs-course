@@ -1,6 +1,11 @@
-import {Observable} from "rxjs";
+import { Observable } from 'rxjs';
 
-export function createHttpObservable(url: string) {
+/**
+ * createHttpObservable(string) returns an Observable of type Object
+ *
+ * @param url
+ */
+export function createHttpObservable(url: string) : Observable<Object> {
   return Observable.create(observer => {
 
     // Browser Fetch API
