@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { noop, Observable} from 'rxjs';
+import { noop } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { createHttpObservable } from '../common/util';
 
 @Component({
   selector: 'about',
@@ -8,35 +10,18 @@ import { noop, Observable} from 'rxjs';
 })
 export class AboutComponent implements OnInit {
 
-  constructor() {
-  }
+  constructor() { }
 
   ngOnInit() {
 
-    const http$ = Observable.create(observer => {
+    const http$ = createHttpObservable('/api/courses');
 
-      // Browser Fetch API
-      fetch('/api/courses')
-        .then(response => {
+    const courses$ = http$
+      .pipe(
+        map(res => res['payload'])
+      );
 
-          return response.json();
-
-        })
-        .then(body => {
-
-          observer.next(body);
-          observer.complete();
-
-        })
-        .catch(err => {
-
-          observer.error(err);
-
-        });
-
-    });
-
-    http$.subscribe(
+    courses$.subscribe(
       courses => console.log(courses),
       noop,
       () => console.log('completed')
