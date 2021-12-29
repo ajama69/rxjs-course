@@ -51,6 +51,9 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
                     'content-type': 'application/json'
                 }
               }));
+
+              saveCourse$.subscribe();
+
           });
 
     }
