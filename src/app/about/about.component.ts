@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { concat, interval, of } from 'rxjs';
+import { interval, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'about',
@@ -12,16 +13,14 @@ export class AboutComponent implements OnInit {
 
   ngOnInit() {
 
-    // const source1$ = of('a', 'b', 'c');
-    const source1$ = interval(1000);
+    const interval1$ = interval(1000);
 
-    const source2$ = of('d', 'e', 'f');
+    const interval2$ = interval1$.pipe(map(val => 10 * val));
 
-    const source3$ = of('x', 'y', 'z');
+    const result$ = merge(interval1$, interval2$);
 
-    const result$ = concat(source1$, source2$, source3$);
+    result$.subscribe(console.log);
 
-    // result$.subscribe(console.log);
   }
 
 }
