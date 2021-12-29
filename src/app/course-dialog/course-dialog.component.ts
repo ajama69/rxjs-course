@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Course} from '../model/course';
+import { Course } from '../model/course';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
-import { filter } from 'rxjs/operators';
+import { concatMap, filter } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/internal-compatibility';
 
 @Component({
@@ -40,15 +40,10 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
 
         this.form.valueChanges
           .pipe(
-              filter(() => this.form.valid)
+              filter(() => this.form.valid),
+            concatMap(changes => this.saveCourse(changes))
           )
-          .subscribe(changes => {
-
-              const saveCourse$ = this.saveCourse(changes);
-
-              saveCourse$.subscribe();
-
-          });
+          .subscribe();
 
     }
 
