@@ -44,13 +44,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
           )
           .subscribe(changes => {
 
-              const saveCourse$ = fromPromise(fetch(`/api/courses/${this.course.id}`, {
-                method: 'PUT',
-                body: JSON.stringify(changes),
-                headers: {
-                    'content-type': 'application/json'
-                }
-              }));
+              const saveCourse$ = this.saveCourse(changes);
 
               saveCourse$.subscribe();
 
@@ -58,7 +52,20 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
 
     }
 
-
+  /**
+   * Return an Observable that represents an HTTP call to the backend
+   *
+   * @param changes
+   */
+  saveCourse(changes) {
+        return fromPromise(fetch(`/api/courses/${this.course.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(changes),
+          headers: {
+            'content-type': 'application/json'
+          }
+        }));
+    }
 
     ngAfterViewInit() {
 
